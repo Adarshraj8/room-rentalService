@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: EncoderSoftware.RoomRental.RoomRentalApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.482 s - in EncoderSoftware.RoomRental.RoomRentalApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.162 s - in EncoderSoftware.RoomRental.RoomRentalApplicationTests
