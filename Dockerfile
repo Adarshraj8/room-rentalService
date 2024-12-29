@@ -1,7 +1,13 @@
+# Use OpenJDK 17 base image
 FROM openjdk:17-jdk-slim
 
 # Install Maven
-RUN apt-get update && apt-get install -y maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    apt-get clean
+
+# Verify Maven installation (this will print the Maven version during build)
+RUN mvn -v
 
 # Create a volume
 VOLUME /tmp
@@ -9,7 +15,7 @@ VOLUME /tmp
 # Argument for the JAR file
 ARG JAR_FILE=target/RoomRental-0.0.1-SNAPSHOT.jar
 
-# Build the project
+# Copy the source code into the container
 COPY . .
 
 # Run Maven to build the project
