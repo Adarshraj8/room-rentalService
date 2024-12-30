@@ -9,14 +9,11 @@ RUN apt-get update && \
 # Set the working directory
 WORKDIR /app
 
-# Copy the entire project
-COPY . .
+# Copy the JAR file from the target directory into the container
+COPY target/RoomRental-0.0.1-SNAPSHOT.jar /app/
 
-# Build the project using Maven
-RUN mvn clean package -DskipTests
+# Expose the application port (use 1000 if your app runs on port 1000)
+EXPOSE 1000
 
-# Expose port 8080
-EXPOSE 8080
-
-# Command to run the JAR file (update the JAR name if different)
+# Command to run the JAR file
 ENTRYPOINT ["java", "-jar", "/app/RoomRental-0.0.1-SNAPSHOT.jar"]
