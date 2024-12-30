@@ -19,4 +19,4 @@ RUN mvn clean package -DskipTests
 EXPOSE 8080
 
 # Command to run the JAR file (update the JAR name if different)
-ENTRYPOINT ["java", "-jar", "target/room-rental-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/RoomRental-0.0.1-SNAPSHOT.jar"]
