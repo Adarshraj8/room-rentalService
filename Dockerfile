@@ -1,19 +1,22 @@
-VOLUME /tmp
+# Use a base image with OpenJDK 17
+FROM openjdk:17-jdk-slim
 
-# Argument for the JAR file
-ARG JAR_FILE=target/RoomRental-0.0.1-SNAPSHOT.jar
+# Install Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    apt-get clean;
 
-# Copy the source code into the container
+# Set the working directory
+WORKDIR /app
+
+# Copy the entire project
 COPY . .
 
-# Run Maven to build the project
-RUN mvn clean package
+# Build the project using Maven
+RUN mvn clean package -DskipTests
 
-# Copy the built JAR file into the container
-COPY ${JAR_FILE} app.jar
+# Expose port 8080
+EXPOSE 8080
 
-# Expose port 8070
-EXPOSE 8070
-
-# Run the application
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+# Command to run the JAR file (update the JAR name if different)
+ENTRYPOINT ["java", "-jar", "target/room-rental-service-0.0.1-SNAPSHOT.jar"]
