@@ -39,7 +39,7 @@ pipeline {
             }
         }
 
-        // Stage for Docker Push
+        // Stage for Docker Push (Optional)
         stage('Docker Push') {
             steps {
                 script {
@@ -64,12 +64,18 @@ pipeline {
                             echo 'Pulling the latest Docker image from Docker Hub...'
                             docker pull ${IMAGE_NAME}
 
-                            echo 'Stopping any running containers...'
+                            echo 'Stopping and removing any old containers...'
                             docker stop mycontainer || true
                             docker rm mycontainer || true
 
+                            echo 'Removing old Docker images...'
+                            docker rmi ${IMAGE_NAME} || true
+
                             echo 'Running the new container...'
                             docker run -d -p 8070:1000 --name mycontainer ${IMAGE_NAME}
+
+                            echo 'Checking Docker container status...'
+                            docker ps -a
                         EOF
                     """
                 }
@@ -78,9 +84,16 @@ pipeline {
     }
 
     post {
-        // Handle cleanup and notifications after build
         always {
             echo 'Build and deployment process completed!'
+        }
+
+        success {
+            echo 'Deployment to EC2 was successful!'
+        }
+
+        failure {
+            echo 'Something went wrong with the build or deployment.'
         }
     }
 }
