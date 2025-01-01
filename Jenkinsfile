@@ -5,7 +5,8 @@ pipeline {
         // Define Docker image name and tag
         IMAGE_NAME = 'adarsh87/java:v2'
         EC2_HOST = '3.110.154.120'  // EC2 instance public IP or hostname
-        EC2_USER = 'ubuntu'       // EC2 username (usually ubuntu for Ubuntu-based EC2)
+        EC2_USER = 'ubuntu'         // EC2 username (usually ubuntu for Ubuntu-based EC2)
+        SSH_KEY_PATH = '/home/ubuntu/youtube-key.pem'  // Replace this with the actual path to your SSH private key
     }
 
     tools {
@@ -33,7 +34,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker Image
-                    sh 'docker build -t ${IMAGE_NAME} .'
+                    sh "docker build -t ${IMAGE_NAME} ."
                 }
             }
         }
@@ -44,7 +45,7 @@ pipeline {
                 script {
                     // Push the image to Docker Hub using credentials
                     withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
-                        sh 'docker push ${IMAGE_NAME}'
+                        sh "docker push ${IMAGE_NAME}"
                     }
                 }
             }
@@ -54,22 +55,23 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 script {
-                    // Use Jenkins credentials for secure SSH access
-                    sshagent(['ec2-ssh-key']) { // Replace 'ec2-ssh-key' with your Jenkins SSH credential ID
-                        sh """
-                            ssh ${EC2_USER}@${EC2_HOST} << EOF
-                                echo 'Pulling the latest Docker image from Docker Hub...'
-                                docker pull ${IMAGE_NAME}
+                    // Ensure SSH key permissions are set correctly
+                    sh "chmod 400 ${SSH_KEY_PATH}"
 
-                                echo 'Stopping any running containers...'
-                                docker stop mycontainer || true
-                                docker rm mycontainer || true
+                    // SSH into EC2 instance and deploy Docker container
+                    sh """
+                        ssh -i ${SSH_KEY_PATH} ${EC2_USER}@${EC2_HOST} << EOF
+                            echo 'Pulling the latest Docker image from Docker Hub...'
+                            docker pull ${IMAGE_NAME}
 
-                                echo 'Running the new container...'
-                                docker run -d -p 8070:1000 --name mycontainer ${IMAGE_NAME}
-                            EOF
-                        """
-                    }
+                            echo 'Stopping any running containers...'
+                            docker stop mycontainer || true
+                            docker rm mycontainer || true
+
+                            echo 'Running the new container...'
+                            docker run -d -p 8070:1000 --name mycontainer ${IMAGE_NAME}
+                        EOF
+                    """
                 }
             }
         }
