@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Define Docker image name and tag
         IMAGE_NAME = 'adarsh87/java:v2'
-        EC2_HOST = '3.110.154.120'  // EC2 instance public IP or hostname
+        EC2_HOST = '13.233.21.83'  // EC2 instance public IP or hostname
         EC2_USER = 'ubuntu'         // EC2 username (usually ubuntu for Ubuntu-based EC2)
         SSH_KEY_PATH = '/home/ubuntu/youtube-key.pem'  // Replace this with the actual path to your SSH private key
     }
